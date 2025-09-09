@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAKE NEWS HUNTER</title>
+    <style>
+        /* Reset + Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* Card Box */
+        .card {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        .card h2 {
+            margin-bottom: 0.5rem;
+            color: #2563eb;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            color: #475569;
+        }
+
+        /* Input Label */
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        /* Textarea */
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            resize: none;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Button */
+        button {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(90deg, #1d4ed8, #1e40af);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Result display */
+        #result {
+            margin-top: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #111;
+            padding: 0.8rem;
+            border-radius: 8px;
+            display: none; /* default hidden */
+        }
+
+        #result.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #16a34a;
+        }
+
+        #result.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #dc2626;
+        }
+
+        #result.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            margin-top: auto;
+            border-top: 1px solid #1e293b;
+        }
+
+        .github-link {
+            margin-top: 1rem;
+        }
+
+        .github-link a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .github-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>🕵️‍♂️ FAKE NEWS HUNTER</h1>
+        <p>(The Fake News Detector)</p>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="card">
+            <h2>Check News Authenticity</h2>
+            <p class="subtitle">Enter any headline or article below and find out if it's Fake or Real.</p>
+            <form id="newsForm" onsubmit="return false;">
+                <label for="newsInput">Enter News:</label>
+                <textarea id="newsInput" rows="6" placeholder="Paste or type your news article here..."></textarea>
+                <button id="predictBtn" type="button">🔍 Analyze News</button>
+                <div id="result"></div>
+            </form>
+            <div class="github-link">
+                <p>📂 <a href="https://github.com/Khan786-Aamir/fake-news-detector" target="_blank">View Source Code on GitHub</a></p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 FAKE NEWS HUNTER | Built with ❤️ to fight misinformation</p>
+        <p>🚀 Deployed on GitHub Pages</p>
+    </footer>
+
+    <script>
+        // Simple client-side fake news detection using keywords
+        document.addEventListener("DOMContentLoaded", () => {
+            const newsInput = document.getElementById("newsInput");
+            const predictBtn = document.getElementById("predictBtn");
+            const resultDiv = document.getElementById("result");
+
+            // Helper function: show styled result
+            function showResult(message, type) {
+                resultDiv.style.display = "block";
+                resultDiv.classList.remove("success", "error", "info");
+                if (type === "success") resultDiv.classList.add("success");
+                if (type === "error") resultDiv.classList.add("error");
+                if (type === "info") resultDiv.classList.add("info");
+                resultDiv.innerHTML = message;
+            }
+
+            // Simple fake news detection logic
+            function detectFakeNews(text) {
+                text = text.toLowerCase();
+                
+                // Keywords that often appear in fake news
+                const fakeKeywords = [
+                    'breaking', 'shocking', 'unbelievable', 'miracle', 'secret', 'banned', 'exposed',
+                    'cure', 'amazing', 'incredible', 'conspiracy', 'government hiding', 'doctors hate',
+                    'this one trick', 'they dont want you to know', 'overnight', 'instantly',
+                    'alien', 'ufo', 'illuminati', 'new world order'
+                ];
+
+                // Keywords that often appear in real news
+                const realKeywords = [
+                    'according to', 'study shows', 'research', 'university', 'professor', 'data',
+                    'report', 'analysis', 'statistics', 'evidence', 'published', 'peer reviewed',
+                    'expert', 'official', 'government', 'department', 'ministry', 'council'
+                ];
+
+                let fakeScore = 0;
+                let realScore = 0;
+
+                // Count fake keywords
+                fakeKeywords.forEach(keyword => {
+                    if (text.includes(keyword)) {
+                        fakeScore += 1;
+                    }
+                });
+
+                // Count real keywords  
+                realKeywords.forEach(keyword => {
+                    if (text.includes(keyword)) {
+                        realScore += 1;
+                    }
+                });
+
+                // Determine result
+                if (fakeScore > realScore) {
+                    return { label: 1, confidence: Math.min(0.6 + (fakeScore * 0.1), 0.95) };
+                } else if (realScore > fakeScore) {
+                    return { label: 0, confidence: Math.min(0.6 + (realScore * 0.1), 0.95) };
+                } else {
+                    // Default to real if no clear indicators
+                    return { label: 0, confidence: 0.5 };
+                }
+            }
+
+            async function predictFakeNews() {
+                const newsText = newsInput.value.trim();
+
+                if (!newsText) {
+                    showResult("⚠️ Please enter some news text first!", "error");
+                    return;
+                }
+
+                showResult("⏳ Analyzing news...", "info");
+                predictBtn.disabled = true;
+                const oldText = predictBtn.innerHTML;
+                predictBtn.innerHTML = "Analyzing...";
+
+                // Simulate processing time
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                try {
+                    const result = detectFakeNews(newsText);
+                    
+                    let labelText;
+                    if (result.label === 1) {
+                        labelText = "❌ This news appears to be <strong>Fake</strong>!";
+                        showResult(labelText, "error");
+                    } else {
+                        labelText = "✅ This news appears to be <strong>Real</strong>!";
+                        showResult(labelText, "success");
+                    }
+
+                    // Add confidence score
+                    const confidence = (result.confidence * 100).toFixed(1);
+                    resultDiv.innerHTML += `<br/><small>Confidence: ${confidence}%</small>`;
+                    resultDiv.innerHTML += `<br/><small>⚠️ Note: This is a basic keyword-based analysis. For accurate results, use the full Flask application.</small>`;
+
+                } catch (err) {
+                    showResult(`⚠️ Error: ${err.message}`, "error");
+                    console.error(err);
+                } finally {
+                    predictBtn.disabled = false;
+                    predictBtn.innerHTML = oldText;
+                }
+            }
+
+            // Button click event
+            predictBtn.addEventListener("click", predictFakeNews);
+
+            // Shortcut: Ctrl+Enter for quick submit
+            newsInput.addEventListener("keydown", (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                    predictFakeNews();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

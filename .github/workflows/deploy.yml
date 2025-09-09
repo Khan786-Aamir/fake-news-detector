@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Create sample data and train model
+      run: |
+        python train.py
+
+    - name: Test Flask app
+      run: |
+        python -c "
+        import app
+        print('✅ Flask app loads successfully!')
+        "
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+
+    - name: Build site
+      run: |
+        mkdir -p _site
+        cp -r docs/* _site/
+        echo '# Fake News Hunter' > _site/README.md
+        echo 'Deployed Flask app with GitHub Pages fallback' >> _site/README.md
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: _site
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
