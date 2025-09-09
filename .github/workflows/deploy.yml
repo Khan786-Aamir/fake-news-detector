@@ -1,11 +1,4 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+# ...existing code...
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -16,7 +9,7 @@ jobs:
       id-token: write
 
     steps:
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4   # <-- v3 ko v4 se replace karein
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -57,3 +50,4 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v2
+# ...existing code...
