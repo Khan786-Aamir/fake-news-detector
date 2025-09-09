@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Model file
+*.pkl
+model.pkl
+
+# Datasets (local only—do not commit)
+fake.csv
+real.csv
+data/
+
+# Editor and config files
+.env
+.vscode/
+.DS_Store
